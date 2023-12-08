@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ItemController extends Controller
 {
@@ -41,7 +42,10 @@ class ItemController extends Controller
         $data = $request->all();
         //データベースに保存
         // INSERT INTO items (name, price) VALUES (xxxx, xxxx);
+        // Eloquent
         Item::create($data);
+        // QueryBuilder
+        //DB::table('items')->create($data);
         //リダイレクト
         return redirect(route('item.index'));
     }
@@ -92,10 +96,11 @@ class ItemController extends Controller
         $data = $request->all();
         // dd($data);
         // UPDATE items SET price = xxx WHERE id = xx;
-        // 1.
+        // 1. Query Builder
         // unset($data['_token']);
         // Item::where('id', $id)->update($data);
-        // 2.
+        // DB::table('items')->where('id', $id)->update($data);
+        // 2. Eloquent
         // SELECT * FROM items WHERE id = xx;
         // UPDATE items SET price = xxx WHERE id = xx;
         Item::find($id)->fill($data)->save();
@@ -107,8 +112,11 @@ class ItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
-        //
+        // DELETE FROM items WHERE id = xx;
+        Item::destroy($id);
+        // 一覧画面にリダイレクト
+        return redirect(route('item.index'));
     }
 }
